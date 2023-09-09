@@ -1,0 +1,25 @@
+env: DEV
+port: 4321
+logLevel: DEBUG
+logFormat: text
+logMode: true
+postgres:
+  connectTimeout: 3000
+  maxIdleConnections: 5
+  maxOpenConnections: 10
+  master:
+    appName: go-admin
+    dbName: coba
+    host: 192.168.1.11
+    password: postgres
+    port: 5432
+    schema: public
+    user: postgres
+  slave:
+    appName: go_disb-platform-slave
+    dbName: disb_platform
+    host: 192.168.1.11
+    password: postgres
+    port: 5432
+    schema: public
+    user: postgres
