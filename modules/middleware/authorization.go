@@ -10,17 +10,14 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"gorm.io/gorm"
 )
 
 type AuthorizationConfig struct {
-	db      *gorm.DB
 	Skipper middleware.Skipper
 }
 
-func NewAuthorizationMiddleware(db *gorm.DB) *AuthorizationConfig {
+func NewAuthorizationMiddleware() *AuthorizationConfig {
 	return &AuthorizationConfig{
-		db: db,
 		Skipper: func(context echo.Context) bool {
 			return false
 		},

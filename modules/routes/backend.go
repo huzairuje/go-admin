@@ -3,23 +3,23 @@ package routes
 import (
 	"errors"
 	"fmt"
-	"go-admin/utils"
 	"html/template"
 	"strconv"
 	"time"
 
 	"go-admin/boot"
 	"go-admin/infrastructure/postgres"
+	"go-admin/infrastructure/session"
 	controllers "go-admin/modules/controller"
 	"go-admin/modules/middleware"
 	models "go-admin/modules/primitive/model"
 	"go-admin/modules/repository"
+	"go-admin/utils"
 
 	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/echoview-v4"
 	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
-	"go-admin/infrastructure/session"
 	"gorm.io/gorm"
 )
 
@@ -141,7 +141,7 @@ func BackendRoute(e *echo.Echo, handlerSetup boot.HandlerSetup) {
 	// TemplateEngine and make `HTML()` work validly.
 	bGroup := e.Group("/check")
 	backendGroup := bGroup.Group("/admin", mv, middleware.SessionMiddleware(session.Manager))
-	authorizationMiddleware := middleware.NewAuthorizationMiddleware(db)
+	authorizationMiddleware := middleware.NewAuthorizationMiddleware()
 
 	menus, err := repository.GetMenuIsActive(db)
 	if err != nil {
