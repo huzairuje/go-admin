@@ -3,6 +3,9 @@ port: 4321
 logLevel: DEBUG
 logFormat: text
 logMode: true
+maxAgeSession:
+authKey: exampleAuthKey
+encryptionKey: exampleEncryptionKey
 postgres:
   connectTimeout: 3000
   maxIdleConnections: 5

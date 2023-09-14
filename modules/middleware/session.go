@@ -13,8 +13,13 @@ const (
 )
 
 func NewCookieStore() *sessions.CookieStore {
-	authKey := []byte("q3t6w9z$")
-	encryptionKey := []byte("Qy3RBtseuIXUfBYxveg4YA==")
+	authKeyConf := config.Conf.AuthKey
+	encryptionKeyConf := config.Conf.EncryptionKey
+	if authKeyConf == "" || encryptionKeyConf == "" {
+		panic("auth key and or encryption key is either empty or not filled on config")
+	}
+	authKey := []byte(authKeyConf)
+	encryptionKey := []byte(encryptionKeyConf)
 	s := sessions.NewCookieStore(authKey, encryptionKey)
 	maxAge := config.Conf.MaxAgeSession
 	if maxAge == 0 {
@@ -38,7 +43,6 @@ func SessionMiddleware(s *session.ConfigSession) echo.MiddlewareFunc {
 			if result == nil {
 				return context.Redirect(302, "/check/auth/login")
 			}
-
 			return handlerFunc(context)
 
 		}

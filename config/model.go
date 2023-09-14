@@ -37,6 +37,8 @@ type Config struct {
 	Env           string         `mapstructure:"env"`
 	Port          int            `mapstructure:"port"`
 	MaxAgeSession int            `mapstructure:"maxAgeSession"`
+	AuthKey       string         `mapstructure:"authKey"`
+	EncryptionKey string         `mapstructure:"encryptionKey"`
 	LogLevel      string         `mapstructure:"logLevel"`
 	LogMode       bool           `mapstructure:"logMode"`
 	LogFormat     string         `mapstructure:"logFormat"`
