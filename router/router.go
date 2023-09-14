@@ -6,10 +6,12 @@ import (
 	"os"
 
 	"go-admin/boot"
+	"go-admin/infrastructure/httplib"
 	"go-admin/infrastructure/session"
 	"go-admin/infrastructure/validator"
 	middlewareFunc "go-admin/modules/middleware"
 	"go-admin/modules/routes"
+	"go-admin/utils"
 
 	gorillaCtx "github.com/gorilla/context"
 	"github.com/labstack/echo/v4"
@@ -26,12 +28,26 @@ func NewHandlerRouter(setup boot.HandlerSetup) HandlerRouter {
 	}
 }
 
+func NotFoundHandler(c echo.Context) error {
+	// Check if the request accepts JSON
+	headerAccept := c.Request().Header.Get("Accept")
+	headerContentType := c.Request().Header.Get("Content-Type")
+	headersRule := []string{headerAccept, headerContentType}
+	jsonTypeHeader := "application/json"
+	if utils.Contains(headersRule, jsonTypeHeader) {
+		// Response with JSON body
+		return httplib.SetErrorResponse(c, http.StatusNotFound, "Not Found Routes")
+	}
+	// Response with HTML
+	return c.Render(http.StatusNotFound, "auth/error.html", nil)
+}
+
 func (h HandlerRouter) RouterWithMiddleware() *echo.Echo {
 	c := echo.New()
 	c.Use(middleware.Logger())
 
 	echo.NotFoundHandler = func(c echo.Context) error {
-		return c.Render(http.StatusNotFound, "auth/error.html", nil)
+		return NotFoundHandler(c)
 	}
 
 	c.Static("/check/assets", "assets")
@@ -57,6 +73,7 @@ func (h HandlerRouter) RouterWithMiddleware() *echo.Echo {
 
 	session.Manager = session.NewSessionManager(middlewareFunc.NewCookieStore())
 
+	routes.ApiRoutes(c, h.Setup)
 	routes.BackendRoute(c, h.Setup)
 	routes.FrontendRoute(c, h.Setup)
 

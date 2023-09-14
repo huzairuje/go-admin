@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"go-admin/infrastructure/httplib"
 	"go-admin/infrastructure/session"
 	"go-admin/modules/helper"
 	"go-admin/modules/primitive/dto"
@@ -71,7 +72,6 @@ func (c *UserController) List(ctx echo.Context) error {
 	//var role string
 	listOfData := make([]map[string]interface{}, len(data))
 	for k, v := range data {
-
 		action = `<div class="btn-group open">
 					<button class="btn btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true"> Actions</button>
                       <ul class="dropdown-menu" role="menu">
@@ -114,13 +114,13 @@ func (c *UserController) List(ctx echo.Context) error {
 		RecordsFiltered: recordFiltered,
 		Data:            listOfData,
 	}
-	return ctx.JSON(http.StatusOK, &result)
+	return httplib.SetSuccessResponse(ctx, http.StatusOK, http.StatusText(http.StatusOK), &result)
 }
 
 func (c *UserController) Store(ctx echo.Context) error {
 	var userDto dto.UserDto
 	if err := ctx.Bind(&userDto); err != nil {
-		return ctx.JSON(400, echo.Map{"message": "error binding data"})
+		return httplib.SetErrorResponse(ctx, http.StatusBadRequest, "Error Binding Data")
 	}
 	userDto.IsActive = 1
 	if err := ctx.Validate(&userDto); err != nil {
@@ -129,16 +129,16 @@ func (c *UserController) Store(ctx echo.Context) error {
 		if errors.As(err, &errs) {
 			validationErrors = helper.WrapValidationErrors(errs)
 		}
-		return ctx.JSON(400, echo.Map{"message": "error validation", "errors": validationErrors})
+		return httplib.SetCustomResponse(ctx, http.StatusBadRequest, "error validation", nil, validationErrors)
 	}
 
 	result, err := c.service.SaveUser(userDto)
 	if err != nil {
-		return ctx.JSON(400, echo.Map{"message": "error save data user"})
+		return httplib.SetErrorResponse(ctx, http.StatusInternalServerError, "error save data user")
 	}
 
 	session.SetFlashMessage(ctx, "save data success", "success", nil)
-	return ctx.JSON(200, echo.Map{"message": "data has been saved", "data": result})
+	return httplib.SetSuccessResponse(ctx, http.StatusOK, "data has been saved", result)
 }
 
 func (c *UserController) Edit(ctx echo.Context) error {
@@ -147,10 +147,10 @@ func (c *UserController) Edit(ctx echo.Context) error {
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			session.SetFlashMessage(ctx, err.Error(), "error", nil)
-			return ctx.Redirect(302, "/check/admin/users")
+			return ctx.Redirect(http.StatusFound, "/check/admin/users")
 		}
 		session.SetFlashMessage(ctx, err.Error(), "error", nil)
-		return ctx.Redirect(302, "/check/admin/users")
+		return ctx.Redirect(http.StatusFound, "/check/admin/users")
 	}
 	breadCrumbs := map[string]interface{}{
 		"menu": "Edit",
@@ -181,10 +181,10 @@ func (c *UserController) View(ctx echo.Context) error {
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			session.SetFlashMessage(ctx, err.Error(), "error", nil)
-			return ctx.Redirect(302, "/check/admin/users")
+			return ctx.Redirect(http.StatusFound, "/check/admin/users")
 		}
 		session.SetFlashMessage(ctx, err.Error(), "error", nil)
-		return ctx.Redirect(302, "/check/admin/users")
+		return ctx.Redirect(http.StatusFound, "/check/admin/users")
 	}
 	breadCrumbs := map[string]interface{}{
 		"menu": "Detail User",
@@ -198,7 +198,7 @@ func (c *UserController) Update(ctx echo.Context) error {
 	id := ctx.Param("id")
 	var userDto dto.UserUpdateDto
 	if err := ctx.Bind(&userDto); err != nil {
-		return ctx.JSON(400, echo.Map{"message": "error binding data"})
+		return httplib.SetErrorResponse(ctx, http.StatusBadRequest, "Error Binding Data")
 	}
 
 	if err := ctx.Validate(&userDto); err != nil {
@@ -207,7 +207,7 @@ func (c *UserController) Update(ctx echo.Context) error {
 		if errors.As(err, &errs) {
 			validationErrors = helper.WrapValidationErrors(errs)
 		}
-		return ctx.JSON(400, echo.Map{"message": "error validation", "errors": validationErrors})
+		return httplib.SetCustomResponse(ctx, http.StatusBadRequest, "error validation", nil, validationErrors)
 	}
 	//remove file before upload
 	//f, err := c.service.FindUserById(id)
@@ -234,19 +234,19 @@ func (c *UserController) Update(ctx echo.Context) error {
 
 	result, err := c.service.UpdateUser(id, userDto)
 	if err != nil {
-		return ctx.JSON(400, echo.Map{"message": "error update data user"})
+		return httplib.SetErrorResponse(ctx, http.StatusInternalServerError, "error update data user")
 	}
 	session.SetFlashMessage(ctx, "update data success", "success", nil)
-	return ctx.JSON(200, echo.Map{"message": "data has been updated", "data": result})
+	return httplib.SetSuccessResponse(ctx, http.StatusOK, "data has been updated", result)
 }
 
 func (c *UserController) Delete(ctx echo.Context) error {
 	id := ctx.Param("id")
 	err := c.service.DeleteUser(id)
 	if err != nil {
-		return ctx.JSON(500, echo.Map{"message": "error when trying delete data"})
+		return httplib.SetErrorResponse(ctx, http.StatusInternalServerError, "error when trying delete data")
 	}
-	return ctx.JSON(200, echo.Map{"message": "delete data has been deleted"})
+	return httplib.SetSuccessResponse(ctx, http.StatusOK, "success delete data", nil)
 }
 
 func (c *UserController) Profile(ctx echo.Context) error {

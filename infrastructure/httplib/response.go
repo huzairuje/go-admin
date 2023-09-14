@@ -1,18 +1,17 @@
 package httplib
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
 type DefaultResponse struct {
-	Status    string      `json:"status"`
-	Code      int         `json:"code"`
-	Message   string      `json:"message"`
-	Data      interface{} `json:"data"`
-	DataError interface{} `json:"dataError"`
+	Status  string      `json:"status"`
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+	Errors  interface{} `json:"errors"`
 }
 
 type DefaultPaginationResponse struct {
@@ -27,13 +26,12 @@ type DefaultPaginationResponse struct {
 }
 
 func SetSuccessResponse(c echo.Context, code int, message string, data interface{}) error {
-	fmt.Println("wew1")
-	fmt.Println("wew2")
 	return c.JSON(code, DefaultResponse{
 		Status:  http.StatusText(code),
 		Code:    code,
 		Data:    data,
 		Message: message,
+		Errors:  nil,
 	})
 }
 
@@ -61,11 +59,11 @@ func SetErrorResponse(c echo.Context, code int, message string) error {
 
 func SetCustomResponse(c echo.Context, code int, message string, data interface{}, dataErr interface{}) error {
 	return c.JSON(code, DefaultResponse{
-		Status:    http.StatusText(code),
-		Code:      code,
-		Data:      data,
-		Message:   message,
-		DataError: dataErr,
+		Status:  http.StatusText(code),
+		Code:    code,
+		Data:    data,
+		Message: message,
+		Errors:  dataErr,
 	})
 }
 

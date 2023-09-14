@@ -9,6 +9,7 @@ import (
 	"go-admin/infrastructure/postgres"
 	"go-admin/infrastructure/session"
 	controllers "go-admin/modules/controller"
+	"go-admin/modules/controller/api_controller"
 	"go-admin/modules/helper"
 	models "go-admin/modules/primitive/model"
 	"go-admin/modules/repository"
@@ -19,12 +20,10 @@ import (
 
 type HandlerSetup struct {
 	UserController   controllers.UserController
-	HealthController controllers.HealthController
+	HealthController api_controller.HealthController
 	AuthController   controllers.AuthController
-	ConfigController  controllers.ConfigController
-	RoleController    controllers.RoleController
-	DivisiController  controllers.DivisiController
-	JabatanController controllers.JabatanController
+	ConfigController controllers.ConfigController
+	RoleController   controllers.RoleController
 }
 
 func MakeHandler() HandlerSetup {
@@ -50,7 +49,7 @@ func MakeHandler() HandlerSetup {
 
 	healthRepo := repository.NewHealthRepository(db.Master)
 	healthService := service.NewHealthService(healthRepo)
-	healthController := controllers.NewHealthController(healthService)
+	healthController := api_controller.NewHealthController(healthService)
 
 	userRepo := repository.NewUserRepository(db.Master)
 	userService := service.NewUserService(userRepo)
@@ -67,21 +66,11 @@ func MakeHandler() HandlerSetup {
 	roleService := service.NewRoleService(roleRepo)
 	roleController := controllers.NewRoleController(roleService)
 
-	divisiRepo := repository.NewDevisiRepository(db.Master)
-	divisiService := service.NewDevisiService(divisiRepo)
-	divisiController := controllers.NewDevisiController(divisiService)
-
-	jabatanRepo := repository.NewJabatanRepository(db.Master)
-	jabatanService := service.NewJabatanService(jabatanRepo)
-	jabatanController := controllers.NewJabatanController(jabatanService)
-
 	return HandlerSetup{
-		UserController:    userController,
-		HealthController:  healthController,
-		AuthController:    authController,
-		ConfigController:  configController,
-		RoleController:    roleController,
-		DivisiController:  divisiController,
-		JabatanController: jabatanController,
+		UserController:   userController,
+		HealthController: healthController,
+		AuthController:   authController,
+		ConfigController: configController,
+		RoleController:   roleController,
 	}
 }

@@ -1,16 +1,19 @@
-package controllers
+package api_controller
 
 import (
-	"github.com/labstack/echo/v4"
+	"net/http"
+
 	"go-admin/infrastructure/httplib"
 	"go-admin/infrastructure/logger"
+	"go-admin/modules/controller"
 	"go-admin/modules/service"
 	"go-admin/utils"
-	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
 type HealthController struct {
-	Controller
+	controllers.Controller
 	service service.HealthService
 }
 
