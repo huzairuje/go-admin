@@ -34,20 +34,14 @@ var (
 )
 
 type Config struct {
-	Env                     string         `mapstructure:"env"`
-	Port                    int            `mapstructure:"port"`
-	LogLevel                string         `mapstructure:"logLevel"`
-	LogMode                 bool           `mapstructure:"logMode"`
-	LogFormat               string         `mapstructure:"logFormat"`
-	Postgres                PostgresConfig `mapstructure:"postgres"`
-	NewRelic                NewRelic       `mapstructure:"newRelic"`
-	DefaultUrlGoogleapis    string         `mapstructure:"defaultUrlGoogleapis"`
-	Redis                   RedisConfig    `mapstructure:"redis"`
-	GoDisb                  GoDisb         `mapstructure:"goDisb"`
-	GoInternalUser          GoInternalUser `mapstructure:"goInternalUser"`
-	AccountAmartha          AccountAmartha `mapstructure:"accountAmartha"`
-	DefaultCodeDisbursement string         `mapstructure:"codeDefaultDisbursement"`
-	RulesValidator          RulesValidator `mapstructure:"rulesValidator"`
+	Env           string         `mapstructure:"env"`
+	Port          int            `mapstructure:"port"`
+	MaxAgeSession int            `mapstructure:"maxAgeSession"`
+	LogLevel      string         `mapstructure:"logLevel"`
+	LogMode       bool           `mapstructure:"logMode"`
+	LogFormat     string         `mapstructure:"logFormat"`
+	Postgres      PostgresConfig `mapstructure:"postgres"`
+	Redis         RedisConfig    `mapstructure:"redis"`
 }
 
 type NewRelic struct {
@@ -81,26 +75,4 @@ type RedisConfig struct {
 	Port                      int           `mapstructure:"port"`
 	KeySubmitSosialisasiTtl   time.Duration `mapstructure:"keySubmitSosialisasiTtl"`
 	ValueSubmitSosialisasiTtl time.Duration `mapstructure:"valueSubmitSosialisasiTtl"`
-}
-
-type GoDisb struct {
-	Url           string `mapstructure:"url"`
-	BasicUsername string `mapstructure:"basicUsername"`
-	BasicPassword string `mapstructure:"basicPassword"`
-}
-type GoInternalUser struct {
-	Url string `mapstructure:"url"`
-}
-
-type AccountAmartha struct {
-	AccountNumber   string   `mapstructure:"number"`
-	AccountName     string   `mapstructure:"name"`
-	Currency        string   `mapstructure:"currency"`
-	LendingFilename string   `mapstructure:"lendingFilename"`
-	FinanceFilename string   `mapstructure:"financeFilename"`
-	Division        []string `mapstructure:"division"`
-}
-
-type RulesValidator struct {
-	Count int `mapstructure:"count"`
 }

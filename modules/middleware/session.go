@@ -1,19 +1,28 @@
 package middleware
 
 import (
+	"go-admin/config"
 	"go-admin/infrastructure/session"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 )
 
+const (
+	oneWeekInSecond = 604800
+)
+
 func NewCookieStore() *sessions.CookieStore {
 	authKey := []byte("q3t6w9z$")
 	encryptionKey := []byte("Qy3RBtseuIXUfBYxveg4YA==")
 	s := sessions.NewCookieStore(authKey, encryptionKey)
+	maxAge := config.Conf.MaxAgeSession
+	if maxAge == 0 {
+		maxAge = oneWeekInSecond
+	}
 	s.Options = &sessions.Options{
 		Path:     "/",
-		MaxAge:   60 * 360,
+		MaxAge:   maxAge,
 		HttpOnly: true,
 	}
 	return s
