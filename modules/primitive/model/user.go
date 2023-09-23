@@ -21,7 +21,7 @@ type User struct {
 }
 
 func (c User) TableName() string {
-	return "user"
+	return "users"
 }
 
 // BeforeCreate - Lifecycle callback - Generate UUID before persisting

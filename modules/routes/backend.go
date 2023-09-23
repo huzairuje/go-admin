@@ -151,6 +151,9 @@ func BackendRoute(e *echo.Echo, handlerSetup boot.HandlerSetup) {
 	homeController := controllers.NewHomeController()
 	backendGroup.GET("/home", homeController.Index)
 
+	gameController := controllers.NewGameController()
+	backendGroup.GET("/game", gameController.Index)
+
 	authController := handlerSetup.AuthController
 	backendGroup.POST("/logout", authController.Logout)
 
